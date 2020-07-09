@@ -378,6 +378,7 @@ if __name__ == '__main__':
     parser.add_argument('--device', default='', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--multi-scale', action='store_true', help='vary img-size +/- 50%%')
     parser.add_argument('--single-cls', action='store_true', help='train as single-class dataset')
+    parser.add_argument('--log-dir', type=str, default='', help='log directory')
     opt = parser.parse_args()
 
     last = get_latest_run() if opt.resume == 'get_last' else opt.resume  # resume from most recent run
@@ -393,10 +394,12 @@ if __name__ == '__main__':
     if device.type == 'cpu':
         mixed_precision = False
 
+    log_dir = opt.log_dir
+
     # Train
     if not opt.evolve:
         print('Start Tensorboard with "tensorboard --logdir=runs", view at http://localhost:6006/')
-        tb_writer = SummaryWriter(comment=opt.name)
+        tb_writer = SummaryWriter(comment=opt.name, log_dir=log_dir)
         if opt.hyp:  # update hyps
             with open(opt.hyp) as f:
                 hyp.update(yaml.load(f, Loader=yaml.FullLoader))
